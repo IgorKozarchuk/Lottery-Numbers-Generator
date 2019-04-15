@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Random</title>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+		<style>
+			body, input, button {
+				font-family: "Trebuchet MS", Helvetica, sans-serif;
+				color: #014792;
+				background-color: #F3F3C8;
+				font-size: 18px;
+				padding-left: 5%;
+				padding-right: 5%;
+			}
+			body {
+				background: #F3F3C8 url(horseshoe.svg);
+				background-size: 200px;
+			}
+			h1 {
+				padding: 40px 20px;
+				text-align: center;
+				border-bottom: 1px solid #CE3542;
+			}
+			.emphasized {
+				color: #CE3542;
+			}
+			#clover {
+				width: 50px;
+				display: block;
+				margin: auto;
+				transition: transform 1s ease;
+			}
+			input, button {
+				outline: none;
+			}
+			input {
+				width: 80px;
+				border: 2px ridge #015ABF;
+				padding: 2px;
+			}
+			button {
+				background-color: #CE3542;
+				color: #F3F3C8;
+				padding: 10px 20px;
+				border: none;
+				cursor: pointer;
+			}
+			button:hover {
+				box-shadow: 4px 4px 6px rgba(20, 20, 20, 0.5);
+				transition: all 0.4s ease;
+			}
+			#generate-btn {
+				display: block;
+				margin: auto;
+			}
+			p.p-lucky {
+				font-weight: bold;
+				text-align: center;
+			}
+			output {
+				display: block;
+				text-align: center;
+				font-weight: bold;
+				color: #CE3542;
+			}
+			i.fas {
+				margin-right: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<h1>Lottery <span class="emphasized">Lucky Numbers</span> Generator</h1>
+
+		<img id="clover" src="clover.svg" alt="clover">
+
+		<p>Enter <b>min</b> and <b>max</b> numbers from the range:</p>
+
+		<table>
+			<tr>
+				<td>
+					<label for="min">min:</label>
+				</td>
+				<td>
+					<input id="min" type="number">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<label for="max">max:</label>
+				</td>
+				<td>
+					<input id="max" type="number">
+				</td>
+			</tr>
+		</table>
+
+		<p>Enter amount of numbers to guess:</p>
+		<table>
+			<tr>
+				<td>
+					<label for="num">num:</label>
+				</td>
+				<td>
+					<input id="num" type="number">
+				</td>
+			</tr>
+		</table>
+
+		<p><button id="generate-btn"><i class="fas fa-dice"></i> Generate</button></p>
+
+		<p class="p-lucky">Your lucky numbers:</p>
+		<output id="result"></output>
+
+		<script>
+			const minElem = document.getElementById("min");
+			const maxElem = document.getElementById("max");
+			const numElem = document.getElementById("num");
+			const outputElem = document.getElementById("result");
+			const generateBtn = document.getElementById("generate-btn");
+
+			// store values
+			window.addEventListener("load", function() {
+				minElem.value = localStorage.getItem("min");
+				maxElem.value = localStorage.getItem("max");
+				numElem.value = localStorage.getItem("num");
+			});
+
+			generateBtn.addEventListener("click", generate);
+			
+			// random function
+			function getRandom(minimum, maximum) {
+				min = Math.min(minimum, maximum);
+				max = Math.max(minimum, maximum);
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+
+			// generate given amount of unique numbers num from the range min...max
+			function generate(min, max, num) {
+				animateClover();
+
+				let resultArr = [];
+
+				min = +minElem.value;
+				max = +maxElem.value;
+				num = +numElem.value;
+
+				localStorage.setItem("min", min);
+				localStorage.setItem("max", max);
+				localStorage.setItem("num", num);
+
+				if (num < 1 || (Math.abs(min - max) + 1) < num) {
+					outputElem.innerHTML = "Invalid number of guesses";
+					return;
+				}
+
+				if (min == max) { // only one possible result
+					outputElem.innerHTML = min;
+					return;
+				}
+
+				for (let i = 0; i < num; i++) {
+					let randomNum = getRandom(min, max);
+					if (!resultArr.includes(randomNum)) { // only unique numbers
+						resultArr.push(randomNum);
+					} else { i--; }
+				}
+
+				outputElem.innerHTML = resultArr.sort(compareNumeric).join(", ");
+			}
+
+			// compare function
+			function compareNumeric(a, b) {
+				return a - b;
+			}
+			
+			// clover animation
+			let degree = 0;
+			let increment = 360;
+
+			function animateClover() {
+				const clover = document.getElementById("clover");
+				degree = degree + increment;
+				clover.style.transform = "rotate(" + degree + "deg)";
+			}
+		</script>
+
+	</body>
+</html>
