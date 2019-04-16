@@ -190,11 +190,11 @@
 			}
 			
 			// clover animation
+			const clover = document.getElementById("clover");
 			let degree = 0;
 			let increment = 360;
 
 			function animateClover() {
-				const clover = document.getElementById("clover");
 				degree = degree + increment;
 				clover.style.transform = "rotate(" + degree + "deg)";
 			}
